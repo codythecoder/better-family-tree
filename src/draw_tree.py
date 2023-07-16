@@ -1,21 +1,20 @@
 from collections import defaultdict
 from itertools import zip_longest
-import re
-from typing import Any, DefaultDict, Iterable, Literal, Sequence, Union
+from typing import Any, DefaultDict, Sequence
 import pygame
-from pygame import sprite
 from .family_tree import Tree, Person, Relation, Sex, Family
 from random import randrange
 from numbers import Number
-from PIL import Image
-import time
-from math import ceil
 import sys
 from functools import cmp_to_key
 import tkinter as tk
 
 
-class Vector:
+lookback = 3
+screen_size = (1500, 900)
+pressed = None
+
+class Vector(Sequence):
     def __init__(self, point) -> None:
         self.values = list(point)
 
@@ -277,8 +276,10 @@ def _draw(screen, offset: tuple[int, int], nodes: dict[Any, Node], nodeGroup, ge
         elif len(node.parents) == 2:
             parent0 = node.parents[0]
             parent1 = node.parents[1]
-            new_pos = (Vector(parent0.rect.center) +
-                        Vector(parent1.rect.center))/2
+            new_pos = (
+                Vector(parent0.rect.center) +
+                Vector(parent1.rect.center)
+            )/2
             pygame.draw.line(screen, (0, 0, 0), node.rect.center, new_pos)
 
         # draw a red line between spouses
@@ -520,12 +521,6 @@ if __name__ == '__main__':
     """sort_people tdd"""
     import csv
 
-
-    lookback = int(sys.argv[1]) if len(sys.argv) > 2 else None
-    # lookback = 3
-    screen_size = (1500, 900)
-
-    pressed = None
 
     person_list: list[Person] = []
     with open('data/example1.csv') as f:
